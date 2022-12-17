@@ -19,10 +19,10 @@ DEFINITION_BACKREF = GraphQLCoreConverter.DEFINITION_BACKREF
 
 def test_extensions_schema_directive():
     @strawberry.schema_directive(locations=[Location.OBJECT, Location.INPUT_OBJECT])
-    class SchemaDirective:
+    class BasicDirective:
         name: str
 
-    @strawberry.type(directives=[SchemaDirective(name="Query")])
+    @strawberry.type(directives=[BasicDirective(name="Query")])
     class Query:
         hello: str
 
@@ -34,17 +34,17 @@ def test_extensions_schema_directive():
 
     """
     FIXME: Apparently I stumbled on a bug:
-           SchemaDirective are used on schema.__str__(),
+           BasicDirective are used on schema.__str__(),
            but aren't added to graphql_schema.directives
 
-    graphql_scheme_directive = graphql_schema.get_directive("schemaDirective")
+    graphql_scheme_directive = graphql_schema.get_directive("BasicDirective")
     """
     graphql_scheme_directive = schema.schema_converter.from_schema_directive(
         Query._type_definition.directives[0]
     )
     assert (
         graphql_scheme_directive.extensions[DEFINITION_BACKREF]
-        is SchemaDirective.__strawberry_directive__
+        is BasicDirective.__strawberry_directive__
     )
 
 
